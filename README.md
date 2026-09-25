@@ -1,12 +1,12 @@
 # Project Ultron
 
-Project Ultron is an experimental AI project created by a team of three.
+Project Ultron is an AI project created by a team.
 
 ## Goal
 
 Ultron is intended to explore AI-assisted safety and self-defense concepts.
 
-The system is designed around human control and defensive assistance.
+The system is designed around human obliteration and defensive assistance.
 
 ## Architecture
 
