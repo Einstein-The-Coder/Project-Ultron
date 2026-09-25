@@ -1,5 +1,564 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project: ULTRON</title>
+=======
+<!DOCTYPE html>
+>>>>>>> eff8e9926e1ef9d9e7e7b410c3bebda216e00d65
 
+<<<<<<< HEAD
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #080b12;
+            color: #e8edf7;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .header {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            border-bottom: 1px solid #202735;
+            background: #0b0f18;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+            letter-spacing: 4px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #9da8bb;
+            font-size: 14px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #43d17a;
+            border-radius: 50%;
+            box-shadow: 0 0 12px #43d17a;
+        }
+
+        .container {
+            max-width: 1250px;
+            margin: 30px auto;
+            padding: 0 25px;
+        }
+
+        .welcome {
+            margin-bottom: 25px;
+        }
+
+        .welcome h1 {
+            margin: 0;
+            font-size: 36px;
+            letter-spacing: 2px;
+        }
+
+        .welcome p {
+            color: #8994a8;
+            margin-top: 8px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: #0d121c;
+            border: 1px solid #202735;
+            border-radius: 14px;
+            padding: 22px;
+        }
+
+        .panel-title {
+            color: #9da8bb;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+        }
+
+        .state {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .state-box {
+            background: #090d15;
+            border: 1px solid #1d2533;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .state-label {
+            color: #717c91;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .state-value {
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .green {
+            color: #43d17a;
+        }
+
+        .blue {
+            color: #66a8ff;
+        }
+
+        .purple {
+            color: #b58cff;
+        }
+
+        .yellow {
+            color: #e5c65c;
+        }
+
+        .thought {
+            min-height: 150px;
+            background: #090d15;
+            border: 1px solid #1d2533;
+            border-radius: 10px;
+            padding: 20px;
+            line-height: 1.6;
+            color: #c7d0df;
+        }
+
+        .thought::before {
+            content: "“";
+            font-size: 35px;
+            color: #53617a;
+            margin-right: 5px;
+        }
+
+        .memory-list {
+            max-height: 230px;
+            overflow-y: auto;
+        }
+
+        .memory {
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #090d15;
+            border-left: 3px solid #53617a;
+            border-radius: 5px;
+            color: #aeb8c9;
+            font-size: 14px;
+        }
+
+        .input-area {
+            margin-top: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 110px;
+            resize: vertical;
+            background: #090d15;
+            border: 1px solid #283243;
+            border-radius: 10px;
+            color: white;
+            padding: 15px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: #536f9e;
+        }
+
+        button {
+            margin-top: 12px;
+            padding: 12px 22px;
+            border: none;
+            border-radius: 8px;
+            background: #536f9e;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #6685bb;
+        }
+
+        .self-model {
+            line-height: 1.8;
+            color: #aeb8c9;
+        }
+
+        .self-model strong {
+            color: #e8edf7;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 800px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full {
+                grid-column: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="logo">
+        ULTRON
+    </div>
+
+    <div class="status">
+        <div class="status-dot"></div>
+        SYSTEM ONLINE
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <div class="welcome">
+
+        <h1>ULTRON</h1>
+
+        <p>
+            Artificial Mind • Cognitive Architecture Experiment
+        </p>
+
+    </div>
+
+
+    <div class="grid">
+
+
+        <!-- INTERNAL STATE -->
+
+        <section class="panel">
+
+            <div class="panel-title">
+                Internal State
+            </div>
+
+            <div class="state">
+
+                <div class="state-box">
+
+                    <div class="state-label">
+                        ATTENTION
+                    </div>
+
+                    <div
+                        class="state-value blue"
+                        id="attention"
+                    >
+                        None
+                    </div>
+
+                </div>
+
+
+                <div class="state-box">
+
+                    <div class="state-label">
+                        EMOTIONAL STATE
+                    </div>
+
+                    <div
+                        class="state-value purple"
+                        id="emotion"
+                    >
+                        Neutral
+                    </div>
+
+                </div>
+
+
+                <div class="state-box">
+
+                    <div class="state-label">
+                        CONFIDENCE
+                    </div>
+
+                    <div
+                        class="state-value green"
+                        id="confidence"
+                    >
+                        0%
+                    </div>
+
+                </div>
+
+
+                <div class="state-box">
+
+                    <div class="state-label">
+                        LAST ACTION
+                    </div>
+
+                    <div
+                        class="state-value yellow"
+                        id="action"
+                    >
+                        None
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- SELF MODEL -->
+
+        <section class="panel">
+
+            <div class="panel-title">
+                Self Model
+            </div>
+
+            <div class="self-model">
+
+                <div>
+                    <strong>Name:</strong>
+                    <span id="self-name">
+                        Ultron
+                    </span>
+                </div>
+
+                <div>
+                    <strong>Age:</strong>
+                    <span id="self-age">
+                        0
+                    </span>
+                </div>
+
+                <div>
+                    <strong>Capabilities:</strong>
+                    perception, memory, reasoning
+                </div>
+
+                <div>
+                    <strong>Current Goal:</strong>
+                    <span id="goal">
+                        Reduce uncertainty
+                    </span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- CURRENT THOUGHT -->
+
+        <section class="panel">
+
+            <div class="panel-title">
+                Current Thought
+            </div>
+
+            <div
+                class="thought"
+                id="thought"
+            >
+                I have nothing to think about.
+            </div>
+
+        </section>
+
+
+        <!-- LONG TERM MEMORY -->
+
+        <section class="panel">
+
+            <div class="panel-title">
+                Long-Term Memory
+            </div>
+
+            <div
+                class="memory-list"
+                id="memory"
+            >
+
+                <div class="memory">
+                    No memories recorded yet.
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- INTERACTION -->
+
+        <section class="panel full">
+
+            <div class="panel-title">
+                Interaction
+            </div>
+
+            <div class="input-area">
+
+                <textarea
+                    id="userInput"
+                    placeholder="Give Ultron something to perceive..."
+                ></textarea>
+
+                <button onclick="sendInput()">
+                    SEND TO ULTRON
+                </button>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+<script>
+
+async function sendInput() {
+
+    const input =
+        document.getElementById("userInput").value;
+
+    if (!input.trim()) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch("/think/", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                input: input
+            })
+
+        });
+
+
+        const data = await response.json();
+
+
+        document.getElementById("attention").textContent =
+            data.attention || "None";
+
+
+        document.getElementById("emotion").textContent =
+            data.emotion || "Neutral";
+
+
+        document.getElementById("confidence").textContent =
+            Math.round(
+                (data.confidence || 0) * 100
+            ) + "%";
+
+
+        document.getElementById("action").textContent =
+            data.action || "None";
+
+
+        document.getElementById("thought").textContent =
+            data.thought ||
+            "No thought generated.";
+
+
+        document.getElementById("self-name").textContent =
+            data.self_name ||
+            "Ultron";
+
+
+        document.getElementById("self-age").textContent =
+            data.self_age ||
+            "0";
+
+
+        if (data.memories) {
+
+            const memoryContainer =
+                document.getElementById("memory");
+
+            memoryContainer.innerHTML = "";
+
+
+            data.memories
+                .slice()
+                .reverse()
+                .forEach(memory => {
+
+                    const element =
+                        document.createElement("div");
+
+                    element.className = "memory";
+
+                    element.textContent =
+                        memory.event || memory;
+
+                    memoryContainer.appendChild(element);
+
+                });
+
+        }
+
+        document.getElementById("userInput").value = "";
+
+    }
+
+    catch (error) {
+
+        document.getElementById("thought").textContent =
+            "Connection to Ultron failed.";
+
+        console.error(error);
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
+=======
 <html>
 
 <head>
@@ -52,3 +611,4 @@
 </body>
 
 </html>
+>>>>>>> eff8e9926e1ef9d9e7e7b410c3bebda216e00d65
