@@ -1,1 +1,9 @@
-Flask
+Django
+numpy
+pandas
+scikit-learn
+matplotlib
+seaborn
+tqdm
+torch
+joblib
