@@ -10,7 +10,7 @@ def prepare_input(data):
 
     if data.size != 64:
         raise ValueError(
-            "Ultron expects 64 input values."
+            "Expected 64 input values."
         )
 
     return data.reshape(1, 64)

@@ -8,6 +8,7 @@ class UltronModel(nn.Module):
         super().__init__()
 
         self.network = nn.Sequential(
+
             nn.Linear(64, 128),
             nn.ReLU(),
 
