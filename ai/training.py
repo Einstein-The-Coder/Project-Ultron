@@ -18,6 +18,32 @@ def train(
     batch_size=64,
     learning_rate=0.001
 ):
+    # ==========================================
+    # DEVICE
+    # ==========================================
+
+    if torch.cuda.is_available():
+        device = torch.device("cuda")
+        print()
+        print("===================================")
+        print("       NVIDIA GPU DETECTED")
+        print("===================================")
+        print(f"GPU: {torch.cuda.get_device_name(0)}")
+        print(f"CUDA: {torch.version.cuda}")
+        print()
+    else:
+        device = torch.device("cpu")
+
+        print()
+        print("===================================")
+        print("          CPU MODE")
+        print("===================================")
+        print("CUDA GPU not available.")
+        print()
+
+    # ==========================================
+    # LOAD DATA
+    # ==========================================
 
     print("Loading training data...")
 
@@ -25,11 +51,6 @@ def train(
 
     X = digits.data
     y = digits.target
-
-
-    # --------------------------------------------------------
-    # Split dataset
-    # --------------------------------------------------------
 
     X_train, X_test, y_train, y_test = train_test_split(
         X,
@@ -39,19 +60,18 @@ def train(
         stratify=y
     )
 
-
-    # --------------------------------------------------------
-    # Standardize
-    # --------------------------------------------------------
+    # ==========================================
+    # SCALE DATA
+    # ==========================================
 
     scaler = StandardScaler()
 
     X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
 
-
-    # --------------------------------------------------------
-    # Convert to PyTorch
-    # --------------------------------------------------------
+    # ==========================================
+    # MOVE DATA TO PYTORCH
+    # ==========================================
 
     X_train = torch.tensor(
         X_train,
@@ -63,12 +83,20 @@ def train(
         dtype=torch.long
     )
 
+    X_test = torch.tensor(
+        X_test,
+        dtype=torch.float32
+    )
+
+    y_test = torch.tensor(
+        y_test,
+        dtype=torch.long
+    )
 
     dataset = TensorDataset(
         X_train,
         y_train
     )
-
 
     loader = DataLoader(
         dataset,
@@ -76,45 +104,38 @@ def train(
         shuffle=True
     )
 
+    # ==========================================
+    # CREATE MODEL
+    # ==========================================
 
-    # --------------------------------------------------------
-    # Create model
-    # --------------------------------------------------------
-
-    model = UltronModel()
-
-
-    # --------------------------------------------------------
-    # Loss
-    # --------------------------------------------------------
+    model = UltronModel().to(device)
 
     criterion = nn.CrossEntropyLoss()
-
-
-    # --------------------------------------------------------
-    # Optimizer
-    # --------------------------------------------------------
 
     optimizer = optim.Adam(
         model.parameters(),
         lr=learning_rate
     )
 
-
-    # --------------------------------------------------------
-    # Training
-    # --------------------------------------------------------
+    # ==========================================
+    # TRAINING INFO
+    # ==========================================
 
     print()
     print("===================================")
     print("        ULTRON TRAINING")
     print("===================================")
-
+    print(f"Device: {device}")
     print(f"Epochs: {epochs}")
     print(f"Batch size: {batch_size}")
     print(f"Learning rate: {learning_rate}")
+    print(f"Training samples: {len(X_train)}")
+    print(f"Test samples: {len(X_test)}")
     print()
 
+    # ==========================================
+    # TRAIN
+    # ==========================================
 
     for epoch in range(epochs):
 
@@ -124,110 +145,120 @@ def train(
         correct = 0
         total = 0
 
-
         for inputs, labels in loader:
 
-            # Clear previous gradients
+            # Move batch to GPU
+            inputs = inputs.to(device)
+            labels = labels.to(device)
+
             optimizer.zero_grad()
 
-
-            # Forward pass
             outputs = model(inputs)
 
-
-            # Calculate loss
             loss = criterion(
                 outputs,
                 labels
             )
 
-
-            # Backpropagation
             loss.backward()
 
-
-            # Update weights
             optimizer.step()
 
-
-            # Statistics
             total_loss += loss.item()
-
 
             predictions = torch.argmax(
                 outputs,
                 dim=1
             )
 
-
             correct += (
                 predictions == labels
             ).sum().item()
 
-
             total += labels.size(0)
 
-
-        average_loss = (
-            total_loss / len(loader)
-        )
+        average_loss = total_loss / len(loader)
 
         accuracy = correct / total
-
 
         print(
             f"Epoch {epoch + 1:02d}/{epochs} "
             f"| Loss: {average_loss:.4f} "
-            f"| Accuracy: {accuracy * 100:.2f}%"
+            f"| Train Accuracy: {accuracy * 100:.2f}%"
         )
 
+    # ==========================================
+    # EVALUATION
+    # ==========================================
 
-    # --------------------------------------------------------
-    # Create model directory
-    # --------------------------------------------------------
+    print()
+    print("===================================")
+    print("          ULTRON EVALUATION")
+    print("===================================")
+
+    model.eval()
+
+    with torch.no_grad():
+
+        X_test_gpu = X_test.to(device)
+        y_test_gpu = y_test.to(device)
+
+        outputs = model(X_test_gpu)
+
+        predictions = torch.argmax(
+            outputs,
+            dim=1
+        )
+
+        correct = (
+            predictions == y_test_gpu
+        ).sum().item()
+
+        test_accuracy = (
+            correct / len(y_test)
+        )
+
+    print(
+        f"Test Accuracy: "
+        f"{test_accuracy * 100:.2f}%"
+    )
+
+    # ==========================================
+    # SAVE
+    # ==========================================
 
     os.makedirs(
         "models",
         exist_ok=True
     )
 
-
-    # --------------------------------------------------------
-    # Save model
-    # --------------------------------------------------------
-
-    model_path = "models/ultron_digits.pth"
+    model_path = (
+        "models/ultron_digits.pth"
+    )
 
     torch.save(
         model.state_dict(),
         model_path
     )
 
-
-    # --------------------------------------------------------
-    # Save scaler
-    # --------------------------------------------------------
-
-    scaler_path = "models/ultron_scaler.pkl"
+    scaler_path = (
+        "models/ultron_scaler.pkl"
+    )
 
     joblib.dump(
         scaler,
         scaler_path
     )
 
-
     print()
     print("===================================")
-    print("       TRAINING COMPLETE")
+    print("        TRAINING COMPLETE")
     print("===================================")
-
+    print(f"Model saved to: {model_path}")
+    print(f"Scaler saved to: {scaler_path}")
     print(
-        f"Model saved to: {model_path}"
+        f"Final test accuracy: "
+        f"{test_accuracy * 100:.2f}%"
     )
-
-    print(
-        f"Scaler saved to: {scaler_path}"
-    )
-
 
     return model, scaler
