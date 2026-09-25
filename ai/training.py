@@ -1,3 +1,5 @@
+import os
+import joblib
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -11,7 +13,11 @@ from torch.utils.data import TensorDataset, DataLoader
 from .model import UltronModel
 
 
-def train():
+def train(
+    epochs=30,
+    batch_size=64,
+    learning_rate=0.001
+):
 
     print("Loading training data...")
 
@@ -20,6 +26,10 @@ def train():
     X = digits.data
     y = digits.target
 
+
+    # --------------------------------------------------------
+    # Split dataset
+    # --------------------------------------------------------
 
     X_train, X_test, y_train, y_test = train_test_split(
         X,
@@ -30,10 +40,18 @@ def train():
     )
 
 
+    # --------------------------------------------------------
+    # Standardize
+    # --------------------------------------------------------
+
     scaler = StandardScaler()
 
     X_train = scaler.fit_transform(X_train)
 
+
+    # --------------------------------------------------------
+    # Convert to PyTorch
+    # --------------------------------------------------------
 
     X_train = torch.tensor(
         X_train,
@@ -54,26 +72,48 @@ def train():
 
     loader = DataLoader(
         dataset,
-        batch_size=64,
+        batch_size=batch_size,
         shuffle=True
     )
 
 
+    # --------------------------------------------------------
+    # Create model
+    # --------------------------------------------------------
+
     model = UltronModel()
 
 
+    # --------------------------------------------------------
+    # Loss
+    # --------------------------------------------------------
+
     criterion = nn.CrossEntropyLoss()
+
+
+    # --------------------------------------------------------
+    # Optimizer
+    # --------------------------------------------------------
 
     optimizer = optim.Adam(
         model.parameters(),
-        lr=0.001
+        lr=learning_rate
     )
 
 
-    epochs = 30
+    # --------------------------------------------------------
+    # Training
+    # --------------------------------------------------------
 
+    print()
+    print("===================================")
+    print("        ULTRON TRAINING")
+    print("===================================")
 
-    print("Starting training...")
+    print(f"Epochs: {epochs}")
+    print(f"Batch size: {batch_size}")
+    print(f"Learning rate: {learning_rate}")
+    print()
 
 
     for epoch in range(epochs):
@@ -81,37 +121,113 @@ def train():
         model.train()
 
         total_loss = 0
+        correct = 0
+        total = 0
 
 
         for inputs, labels in loader:
 
+            # Clear previous gradients
             optimizer.zero_grad()
 
+
+            # Forward pass
             outputs = model(inputs)
 
+
+            # Calculate loss
             loss = criterion(
                 outputs,
                 labels
             )
 
+
+            # Backpropagation
             loss.backward()
 
+
+            # Update weights
             optimizer.step()
 
+
+            # Statistics
             total_loss += loss.item()
+
+
+            predictions = torch.argmax(
+                outputs,
+                dim=1
+            )
+
+
+            correct += (
+                predictions == labels
+            ).sum().item()
+
+
+            total += labels.size(0)
 
 
         average_loss = (
             total_loss / len(loader)
         )
 
+        accuracy = correct / total
+
 
         print(
-            f"Epoch {epoch + 1}/{epochs} "
-            f"Loss: {average_loss:.4f}"
+            f"Epoch {epoch + 1:02d}/{epochs} "
+            f"| Loss: {average_loss:.4f} "
+            f"| Accuracy: {accuracy * 100:.2f}%"
         )
 
 
-    print("Training complete.")
+    # --------------------------------------------------------
+    # Create model directory
+    # --------------------------------------------------------
+
+    os.makedirs(
+        "models",
+        exist_ok=True
+    )
+
+
+    # --------------------------------------------------------
+    # Save model
+    # --------------------------------------------------------
+
+    model_path = "models/ultron_digits.pth"
+
+    torch.save(
+        model.state_dict(),
+        model_path
+    )
+
+
+    # --------------------------------------------------------
+    # Save scaler
+    # --------------------------------------------------------
+
+    scaler_path = "models/ultron_scaler.pkl"
+
+    joblib.dump(
+        scaler,
+        scaler_path
+    )
+
+
+    print()
+    print("===================================")
+    print("       TRAINING COMPLETE")
+    print("===================================")
+
+    print(
+        f"Model saved to: {model_path}"
+    )
+
+    print(
+        f"Scaler saved to: {scaler_path}"
+    )
+
 
     return model, scaler
