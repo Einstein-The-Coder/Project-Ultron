@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 from ai.inference import UltronInference
 
@@ -7,6 +8,7 @@ from ai.inference import UltronInference
 ultron = UltronInference()
 
 
+@ensure_csrf_cookie
 def index(request):
     return render(request, "ultron/index.html")
 
