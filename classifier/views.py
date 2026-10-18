@@ -1,3 +1,5 @@
+import math
+
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -15,43 +17,40 @@ def index(request):
 
 def predict(request):
     if request.method != "POST":
-        return JsonResponse(
-            {"error": "POST request required"},
-            status=405
-        )
+        return JsonResponse({"error": "POST request required"}, status=405)
+
+    raw_pixels = request.POST.get("pixels", "").strip()
+    if not raw_pixels:
+        return JsonResponse({"error": "No pixel data received"}, status=400)
 
     try:
-        data = request.POST.get("pixels")
+        pixels = [float(value.strip()) for value in raw_pixels.split(",")]
+    except (TypeError, ValueError):
+        return JsonResponse({"error": "Pixels must be comma-separated numbers"}, status=400)
 
-        if not data:
-            return JsonResponse(
-                {"error": "No pixel data received"},
-                status=400
-            )
+    if len(pixels) != 64:
+        return JsonResponse({"error": "Expected exactly 64 pixels"}, status=400)
 
-        pixels = [
-            float(x)
-            for x in data.split(",")
-        ]
+    if not all(math.isfinite(value) for value in pixels):
+        return JsonResponse({"error": "Pixel values must be finite numbers"}, status=400)
 
-        if len(pixels) != 64:
-            return JsonResponse(
-                {"error": "Expected 64 pixels"},
-                status=400
-            )
+    if any(value < 0 or value > 16 for value in pixels):
+        return JsonResponse({"error": "Pixel values must be between 0 and 16"}, status=400)
 
+    try:
         result = ultron.predict(pixels)
-
-        return JsonResponse(result)
-
-    except ValueError:
+    except RuntimeError:
         return JsonResponse(
-            {"error": "Invalid pixel data"},
-            status=400
+            {"error": "The AI model is not ready. Train the model and try again."},
+            status=503,
         )
-
-    except Exception as e:
+    except (ValueError, TypeError):
         return JsonResponse(
-            {"error": str(e)},
-            status=500
+            {"error": "The supplied pixel data could not be processed"},
+            status=400,
         )
+    except Exception:
+        # Do not expose internal paths, model details, or tracebacks in API responses.
+        return JsonResponse({"error": "An internal prediction error occurred"}, status=500)
+
+    return JsonResponse(result)
